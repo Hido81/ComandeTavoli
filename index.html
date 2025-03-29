@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabella dati da Google Sheets</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 10px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+    <script>
+        async function fetchData() {
+            const sheetId = "1LJz73WWQmNkPEkVLGnvWAHnEVZnogIkqo6Fea9EJXW8";  // Sostituisci con l'ID del tuo foglio
+            const apiKey = "TUA_API_KEY";    // Sostituisci con la tua API Key di Google
+            const range = "Dati!A1:G1500";  // Modifica il range se necessario
+            const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}?key=${apiKey}`;
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (!data.values) {
+                    console.error("Errore: Nessun dato trovato");
+                    return;
+                }
+
+                const tableBody = document.getElementById("data-table");
+                tableBody.innerHTML = ""; // Pulisce la tabella prima di riempirla
+
+                data.values.forEach(row => {
+                    let tr = document.createElement("tr");
+                    row.forEach(cell => {
+                        let td = document.createElement("td");
+                        td.textContent = cell;
+                        tr.appendChild(td);
+                    });
+                    tableBody.appendChild(tr);
+                });
+
+                console.log("Dati aggiornati!");
+
+            } catch (error) {
+                console.error("Errore nel recupero dei dati:", error);
+            }
+        }
+
+        window.onload = () => {
+            fetchData(); // Prima chiamata
+            setInterval(fetchData, 10000); // Aggiorna ogni 10 secondi
+        };
+    </script>
+</head>
+<body>
+    <h1>Tabella dati da Google Sheets</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Colonna 1</th>
+                <th>Colonna 2</th>
+                <th>Colonna 3</th>
+                <th>Colonna 4</th>
+            </tr>
+        </thead>
+        <tbody id="data-table"></tbody>
+    </table>
+</body>
+</html>
