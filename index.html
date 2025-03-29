@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sagra Cagnola - Comande&Tavoli</title>
-    <title>by Marco Idolazzi</title>
+    <title>Tabella dati da Google Sheets</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -18,9 +17,13 @@
         th, td {
             border: 1px solid black;
             padding: 10px;
+            text-align: center;
         }
         th {
             background-color: #f2f2f2;
+        }
+        .highlight {
+            background-color: lightgreen !important;
         }
     </style>
     <script>
@@ -42,13 +45,30 @@
                 const tableBody = document.getElementById("data-table");
                 tableBody.innerHTML = ""; // Pulisce la tabella prima di riempirla
 
-                data.values.forEach(row => {
+                data.values.forEach((row, index) => {
                     let tr = document.createElement("tr");
+
+                    // Aggiungi i dati alle celle
                     row.forEach(cell => {
                         let td = document.createElement("td");
                         td.textContent = cell;
                         tr.appendChild(td);
                     });
+
+                    // Aggiungi la checkbox
+                    let checkboxTd = document.createElement("td");
+                    let checkbox = document.createElement("input");
+                    checkbox.type = "checkbox";
+                    checkbox.addEventListener("change", function () {
+                        if (this.checked) {
+                            tr.classList.add("highlight");
+                        } else {
+                            tr.classList.remove("highlight");
+                        }
+                    });
+                    checkboxTd.appendChild(checkbox);
+                    tr.appendChild(checkboxTd);
+
                     tableBody.appendChild(tr);
                 });
 
@@ -61,12 +81,12 @@
 
         window.onload = () => {
             fetchData(); // Prima chiamata
-            setInterval(fetchData, 8000); // Aggiorna ogni 10 secondi
+            setInterval(fetchData, 10000); // Aggiorna ogni 10 secondi
         };
     </script>
 </head>
 <body>
-    <h1>Sagra Cagnola - Comande&Tavoli</h1>
+    <h1>Tabella dati da Google Sheets</h1>
     <table>
         <thead>
             <tr>
