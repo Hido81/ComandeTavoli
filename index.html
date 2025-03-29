@@ -27,13 +27,16 @@
         }
     </style>
     <script>
+        const scriptURL = "https://script.google.com/macros/s/AKfycbzEYJgZmB55xd2-vJ95N_fb6OznttrUGWYtUzeXEZAFjTJ39EHaYxDSzdUZmtyT41SQ/exec"; // Incolla qui l'URL di Apps Script
+
         async function fetchData() {
             const sheetId = "1LJz73WWQmNkPEkVLGnvWAHnEVZnogIkqo6Fea9EJXW8";  // Sostituisci con l'ID del tuo foglio
             const apiKey = "AIzaSyBYWrG6qberwmxzK-KmTYH76iCJClk7d_4";    // Sostituisci con la tua API Key di Google
             const range = "Dati!A2:G1500";  // Modifica il range se necessario
             const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}?key=${apiKey}`;
 
-           try {
+    
+            try {
                 const response = await fetch(url);
                 const data = await response.json();
 
@@ -45,32 +48,28 @@
                 const tableBody = document.getElementById("data-table");
                 tableBody.innerHTML = ""; // Pulisce la tabella prima di riempirla
 
-                // Recupera le righe selezionate dal LocalStorage
                 let selectedRows = JSON.parse(localStorage.getItem("selectedRows")) || {};
 
                 data.values.forEach((row, index) => {
                     let tr = document.createElement("tr");
                     tr.dataset.rowIndex = index; // Salviamo un identificatore per la riga
 
-                    // Aggiungi i dati alle celle
                     row.forEach(cell => {
                         let td = document.createElement("td");
                         td.textContent = cell;
                         tr.appendChild(td);
                     });
 
-                    // Aggiungi la checkbox
                     let checkboxTd = document.createElement("td");
                     let checkbox = document.createElement("input");
                     checkbox.type = "checkbox";
                     
-                    // Controlla se la riga è stata selezionata in precedenza
                     if (selectedRows[index]) {
                         tr.classList.add("highlight");
                         checkbox.checked = true;
                     }
 
-                    checkbox.addEventListener("change", function () {
+                    checkbox.addEventListener("change", async function () {
                         if (this.checked) {
                             tr.classList.add("highlight");
                             selectedRows[index] = true;
@@ -79,6 +78,21 @@
                             delete selectedRows[index];
                         }
                         localStorage.setItem("selectedRows", JSON.stringify(selectedRows));
+
+                        // 🔹 Invia il valore della checkbox al Google Sheets
+                        try {
+                            await fetch(scriptURL, {
+                                method: "POST",
+                                body: JSON.stringify({
+                                    rowIndex: index,
+                                    checked: this.checked
+                                }),
+                                headers: { "Content-Type": "application/json" }
+                            });
+                            console.log("Dati salvati su Google Sheets");
+                        } catch (error) {
+                            console.error("Errore nel salvataggio dei dati:", error);
+                        }
                     });
 
                     checkboxTd.appendChild(checkbox);
@@ -112,7 +126,7 @@
                 <th>Tavolo</th>
                 <th>Note</th>
                 <th>Consegnà</th>
-           </tr>
+          </tr>
         </thead>
         <tbody id="data-table"></tbody>
     </table>
