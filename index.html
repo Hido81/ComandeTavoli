@@ -26,7 +26,7 @@
         async function fetchData() {
             const sheetId = "1LJz73WWQmNkPEkVLGnvWAHnEVZnogIkqo6Fea9EJXW8";  // Sostituisci con l'ID del tuo foglio
             const apiKey = "AIzaSyBYWrG6qberwmxzK-KmTYH76iCJClk7d_4";    // Sostituisci con la tua API Key di Google
-            const range = "Dati!A1:G1500";  // Modifica il range se necessario
+            const range = "Dati!A2:G1500";  // Modifica il range se necessario
             const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}?key=${apiKey}`;
 
             try {
@@ -69,10 +69,13 @@
     <table>
         <thead>
             <tr>
-                <th>Colonna 1</th>
-                <th>Colonna 2</th>
-                <th>Colonna 3</th>
-                <th>Colonna 4</th>
+                <th>Data/Ora Scan</th>
+                <th>Data comanda</th>
+                <th>Ora comanda</th>
+                <th>Cliente</th>
+                <th>Cassa</th>
+                <th>Tavolo</th>
+                <th>Note</th>
             </tr>
         </thead>
         <tbody id="data-table"></tbody>
